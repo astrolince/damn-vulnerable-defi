@@ -54,7 +54,7 @@ describe('[Challenge] Climber', function () {
     it('Exploit', async function () {
         /** CODE YOUR EXPLOIT HERE */
         const ExploitFactory = await ethers.getContractFactory("ClimberExploit", attacker);
-        this.exploit = await ExploitFactory.deploy(this.timelock.address, this.vault.address, attacker.address);
+        this.exploit = await ExploitFactory.deploy(this.timelock.address, this.vault.address);
         await this.exploit.connect(attacker).attack();
 
         const UpgradeFactory = await ethers.getContractFactory("PwnedClimberVault", attacker);
